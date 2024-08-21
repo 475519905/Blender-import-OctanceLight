@@ -2,6 +2,7 @@ import c4d
 from c4d import gui
 import os
 import shutil
+
 def update_counter_file(export_folder, counter):
     counter_file_path = os.path.join(export_folder, 'counter.txt')
     with open(counter_file_path, 'w') as file:
@@ -21,7 +22,6 @@ def get_next_counter(export_folder):
         # 如果文件内容不是整数，则从1开始
         return 1
 
-
 def lerp_color(color1, color2, t):
     """Linearly interpolate between two colors."""
     return [int(color1[i] * (1 - t) + color2[i] * t) for i in range(3)]
@@ -34,7 +34,7 @@ def GradientToBitmap(gradient, width, height, gradient_type):
     bmp.Init(width, height)
 
     knot_count = gradient.GetKnotCount()
-    if knot_count == 0:
+    if (knot_count == 0):
         return None
 
     knots = sorted([gradient.GetKnot(i) for i in range(knot_count)], key=lambda k: k["pos"])
@@ -44,7 +44,6 @@ def GradientToBitmap(gradient, width, height, gradient_type):
             if gradient_type in [c4d.SLA_GRADIENT_TYPE_2D_U, c4d.SLA_GRADIENT_TYPE_2D_V]:
                 t = float(x) if gradient_type == c4d.SLA_GRADIENT_TYPE_2D_U else float(y)
                 t /= (width - 1)
-            # Add other gradient types as needed
 
             # Determine the color for the given t value
             if t <= knots[0]["pos"]:
@@ -121,11 +120,11 @@ def ExportOctaneLightTagImages():
     doc = c4d.documents.GetActiveDocument()
     selected_objects = doc.GetActiveObjects(c4d.GETACTIVEOBJECTFLAGS_CHILDREN)
 
-    destination_folder = "C:\\Users\\Administrator\\Documents\\"
+    documents_path = os.path.expanduser('~/Documents')
 
     # 确保目标文件夹存在
-    if not os.path.exists(destination_folder):
-        os.makedirs(destination_folder)
+    if not os.path.exists(documents_path):
+        os.makedirs(documents_path)
 
     for obj in selected_objects:
         tags = obj.GetTags()
@@ -139,7 +138,7 @@ def ExportOctaneLightTagImages():
                             light_name = obj[c4d.ID_BASELIST_NAME]
                             file_extension = os.path.splitext(image_path)[1]
                             destination_file_name = light_name + file_extension
-                            destination_path = os.path.join(destination_folder, destination_file_name)
+                            destination_path = os.path.join(documents_path, destination_file_name)
                             shutil.copy(image_path, destination_path)
                             print(f"Image exported: {destination_path}")
                     elif texture_shader.CheckType(1029508):  # Octane Image Texture
@@ -148,7 +147,7 @@ def ExportOctaneLightTagImages():
                             light_name = obj[c4d.ID_BASELIST_NAME]
                             file_extension = os.path.splitext(image_path)[1]
                             destination_file_name = light_name + file_extension
-                            destination_path = os.path.join(destination_folder, destination_file_name)
+                            destination_path = os.path.join(documents_path, destination_file_name)
                             shutil.copy(image_path, destination_path)
                             print(f"Image exported: {destination_path}")
                     elif texture_shader.CheckType(c4d.Xcolor):  # 颜色着色器
@@ -161,16 +160,16 @@ def ExportOctaneLightTagImages():
                                 bmp.SetPixel(x, y, r, g, b)
 
                         destination_file_name = obj[c4d.ID_BASELIST_NAME] + ".jpg"
-                        destination_path = os.path.join(destination_folder, destination_file_name)
+                        destination_path = os.path.join(documents_path, destination_file_name)
                         bmp.Save(destination_path, c4d.FILTER_JPG)  # 保存为JPEG
 
 def export_usd_lights_to_tmp():
 
-    export_folder = "C:\\Users\\Administrator\\Documents\\"
+    documents_path = os.path.expanduser('~/Documents')
 
-    counter = get_next_counter(export_folder)
+    counter = get_next_counter(documents_path)
 
-    export_path = os.path.join(export_folder, f"lights{counter}.usdc")
+    export_path = os.path.join(documents_path, f"lights{counter}.usdc")
 
     # 获取当前文档
     doc = c4d.documents.GetActiveDocument()
@@ -185,16 +184,15 @@ def export_usd_lights_to_tmp():
 
     # 设置导出路径
 
-
-    if not os.path.exists(export_folder):
-        os.makedirs(export_folder)
+    if not os.path.exists(documents_path):
+        os.makedirs(documents_path)
 
     # 计算文件名
-    counter = get_next_counter(export_folder)
-    export_path = os.path.join(export_folder, f"lights{counter}.usdc")
+    counter = get_next_counter(documents_path)
+    export_path = os.path.join(documents_path, f"lights{counter}.usdc")
     while os.path.exists(export_path):
         counter += 1
-        export_path = os.path.join(export_folder, f"lights{counter}.usdc")
+        export_path = os.path.join(documents_path, f"lights{counter}.usdc")
 
     # 设置导出参数
     settings = c4d.BaseContainer()
@@ -216,7 +214,7 @@ def export_usd_lights_to_tmp():
 
     if result:
         print("导出成功!")
-        update_counter_file(export_folder, counter + 1)
+        update_counter_file(documents_path, counter + 1)
     else:
         print("导出失败.")
 
