@@ -61,7 +61,8 @@ def link_texture_to_light_from_folder(folder_path):
             links.new(mapping_node.outputs['Vector'], texture_node.inputs['Vector'])
             links.new(texture_node.outputs['Color'], emission_node.inputs['Color'])
             links.new(emission_node.outputs['Emission'], output_node.inputs['Surface'])
-                   #清除未使用的数据块
+
+            # 清除未使用的数据块
             for block in bpy.data.meshes:
                 if block.users == 0:
                     bpy.data.meshes.remove(block)
@@ -88,16 +89,18 @@ def import_and_delete_usd(filepath, scale_factor):
         print(f"已成功删除 {filepath} 文件!")
     except Exception as e:
         print(f"导入或删除文件时出错: {e}")
-        # 在函数末尾递增 run_count
     finally:
         # 在函数末尾递增 run_count
         script_run_count += 1
+
 # 设置文件路径和其他参数
 script_run_count = get_script_run_count()
 
-usd_filepath = f"C:\\Users\\Administrator\\Documents\\lights{script_run_count}.usdc"
+# 使用系统文档路径
+doc_path = os.path.join(os.path.expanduser('~'), 'Documents')
+usd_filepath = os.path.join(doc_path, f"lights{script_run_count}.usdc")
 scale = 0.01
-folder_path = "C:\\Users\\Administrator\\Documents\\"
+folder_path = doc_path
 
 class OBJECT_OT_CustomOperator(bpy.types.Operator):
     bl_idname = "object.custom_operator"
@@ -105,9 +108,12 @@ class OBJECT_OT_CustomOperator(bpy.types.Operator):
 
     def execute(self, context):
         script_run_count = get_script_run_count()
-        usd_filepath = f"C:\\Users\\Administrator\\Documents\\lights{script_run_count}.usdc"
+        
+        # 使用系统文档路径
+        doc_path = os.path.join(os.path.expanduser('~'), 'Documents')
+        usd_filepath = os.path.join(doc_path, f"lights{script_run_count}.usdc")
         scale = 0.01
-        folder_path = "C:\\Users\\Administrator\\Documents\\"
+        folder_path = doc_path
 
         import_and_delete_usd(usd_filepath, scale)
         link_texture_to_light_from_folder(folder_path)
