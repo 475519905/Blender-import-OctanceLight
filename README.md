@@ -1,4 +1,5 @@
 author：https://www.bilibili.com/video/BV1YG411S7ia/
+粉丝群：749682785
 
 
 Installing Scripts in Blender
